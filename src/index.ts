@@ -1,19 +1,48 @@
 import axios from 'axios'
-import { Data } from './types/data'
+import { Data, OutdatedData } from './types/data'
 
 import * as fs from 'fs'
 
-const api = axios.create({
-  baseURL: 'https://api.databinteligencia.com.br/brasileirao/jogos',
-})
+let startYear: number
+let endYear: number
 
-const startYear: number = 2009
-const endYear: number = 2022
+startYear = 2003
+endYear = 2008
 
 const results: Data[] = []
 
 for (let year = startYear; year <= endYear; year++) {
-  const { data } = await api.get<Data>(`${year}`)
+  const { data } = await axios.get<OutdatedData[]>(
+    `https://raw.githubusercontent.com/geovannyAvelar/Dados-Abertos-Campeonato-Brasileiro/master/${year}/${year}.json`,
+  )
+
+  for (const value of data) {
+    for (const match of value.partidas) {
+      const data = {
+        rodada: value.numero.toString(),
+        data: match.data_partida,
+        horario: match.hora_partida,
+        equipe1: match.mandante,
+        equipe2: match.visitante,
+        placar1: match.placar_mandante.toString(),
+        placar2: match.placar_visitante.toString(),
+        estadio: match.estadio,
+        local: match.estadio,
+        edicao: year.toString(),
+      }
+
+      results.push(data)
+    }
+  }
+
+  console.log(`Dataset do ano ${year} carregado.`)
+}
+
+startYear = 2009
+endYear = 2022
+
+for (let year = startYear; year <= endYear; year++) {
+  const { data } = await axios.get<Data>(`https://api.databinteligencia.com.br/brasileirao/jogos/${year}`)
 
   const values = Object.values(data)
 
