@@ -3,6 +3,42 @@ import { Data, OutdatedData } from './types/data'
 
 import * as fs from 'fs'
 
+export enum TeamEnum {
+  Guarani = 'GUA',
+  Internacional = 'INT',
+  Santos = 'SAN',
+  Juventude = 'JUV',
+  Cruzeiro = 'CRU',
+  'Atlético pr' = 'CAP',
+  Paysandu = 'PAY',
+  'Ponte preta' = 'PON',
+  Fluminense = 'FLU',
+  Flamengo = 'FLA',
+  Coritiba = 'CTB',
+  Vasco = 'VAS',
+  'Grêmio' = 'GRE',
+  'Atlético mg' = 'CAM',
+  Figueirense = 'FIG',
+  Corinthians = 'COR',
+  Fortaleza = 'FOR',
+  Vitória = 'VIT',
+  'São paulo' = 'SPA',
+  'São caetano' = 'SCA',
+  'Criciúma' = 'CRI',
+  'Goiás' = 'GOI',
+  'Paraná' = 'PAR',
+  Bahia = 'BAH',
+  'América rn' = 'AMN',
+  Botafogo = 'BOT',
+  Palmeiras = 'PAL',
+  Brasiliense = 'BRA',
+  Sport = 'SPT',
+  'Santa cruz' = 'STA',
+  Ipatinga = 'IPA',
+  'Náutico' = 'NAU',
+  Portuguesa = 'POR',
+}
+
 let startYear: number
 let endYear: number
 
@@ -22,8 +58,10 @@ for (let year = startYear; year <= endYear; year++) {
         rodada: value.numero.toString(),
         data: match.data_partida,
         horario: match.hora_partida,
-        equipe1: match.mandante,
-        equipe2: match.visitante,
+        //@ts-ignore
+        equipe1: TeamEnum[match.mandante],
+        //@ts-ignore
+        equipe2: TeamEnum[match.visitante],
         placar1: match.placar_mandante.toString(),
         placar2: match.placar_visitante.toString(),
         estadio: match.estadio,
@@ -47,7 +85,10 @@ for (let year = startYear; year <= endYear; year++) {
   const values = Object.values(data)
 
   for (const value of values) {
-    results.push({ ...value, edicao: year })
+    results.push({
+      ...value,
+      edicao: year,
+    })
   }
 
   console.log(`Dataset do ano ${year} carregado.`)
